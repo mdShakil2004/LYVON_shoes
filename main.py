@@ -1,9 +1,8 @@
 # main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import chat_routes
+# from routes import chat_routes
 # from routes.ad_routes import router as ad_router
-app = FastAPI(title="Reva AI - Common Crawl LLM Backend (Streaming)")
 
 # Allow frontend to connect
 app.add_middleware(
@@ -21,9 +20,10 @@ app.add_middleware(
 
 # Mount routes
 app.include_router(chat_routes.router)
-# app.include_router(ad_router)
+app.include_router(ad_router)
 
 
 @app.get("/")
 async def root():
     return {"message": "Reva AI backend is running. Use /chat or /chat/stream."}
+
