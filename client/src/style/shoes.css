@@ -1,0 +1,15 @@
+@keyframes slide {
+  0% {
+    transform: translateX(-100px); /* Start slightly left */
+  }
+  50% {
+    transform: translateX(100px); /* Move to the right */
+  }
+  100% {
+    transform: translateX(-100px); /* Return to the left */
+  }
+}
+
+.animate-slide {
+  animation: slide 7s ease-in-out infinite;
+}

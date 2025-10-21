@@ -1,0 +1,7 @@
+client/.env
+client/node_modules
+client/src/assets
+server/contollers.js
+server/models.js
+server/routes.js
+client/package-lock.json
