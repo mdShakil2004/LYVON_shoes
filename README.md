@@ -1,5 +1,5 @@
 
-for entire backend contack to admin : iam.shakil.dev@gmail.com
+for entire backend contact to admin : iam.shakil.dev@gmail.com
 
 .LyVON LyVON LyVON Premium Shoes Platform Premium Shoes Platform Premium Shoes Platform | Full stack developer |Personal Project  | Jan 2024 – Feb 2025 |
  Developed a full-stack e-commerce platform for luxury footwear using React.js, MongoDB, TailwindCSS, FastAPI
