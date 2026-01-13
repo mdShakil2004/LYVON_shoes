@@ -164,8 +164,8 @@ lyvon-backend/
 │   ├── Dockerfile
 │   ├── package.json               ← + @aws-sdk/client-sqs
 │   └── .env.example               ← + AWS credentials, SQS_QUEUE_URL
-├── payments_services/...          ← + for payments services
-├── admin_services/..              ← + for admin services 
+├── payments_services/...          ← + for payments services ------------------------------------------------------------------
+├── admin_services/..              ← + for admin services  --------------------------------------------------------------------
 ├── kubernetes/                    ← K8s manifests (Helm chart optional)
 │   ├── deployments/               ← Deployment YAML for each service
 │   ├── services/                  ← Service YAML
