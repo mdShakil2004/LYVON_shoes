@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  catalog-service:
+    build: ./catalog-service
+    ports:
+      - "3002:3002"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/lyvon
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=secret
+    depends_on:
+      - mongo
+      - redis
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3003:3003"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/lyvon
+      - JWT_SECRET=secret
+      - AWS_REGION=us-east-1
+      - SQS_QUEUE_URL=http://localstack:4566/000000000000/lyvon-order-queue # Use LocalStack for local SQS
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:

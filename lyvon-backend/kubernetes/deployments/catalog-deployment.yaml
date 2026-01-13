@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: catalog
+  template:
+    metadata:
+      labels:
+        app: catalog
+    spec:
+      containers:
+        - name: catalog
+          image: ghcr.io/your-repo/catalog-service:latest
+          ports:
+            - containerPort: 3002
+          envFrom:
+            - secretRef:
+                name: lyvon-secrets
