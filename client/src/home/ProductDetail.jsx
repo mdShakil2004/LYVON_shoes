@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { api } from '../services/api'; 
 
 const ProductDetail = ({
   selectedProduct,
@@ -10,10 +11,45 @@ const ProductDetail = ({
   selectedSize,
   setSelectedSize,
   wishlist,
-  getRecommendations,setSelectedProduct
+  setSelectedProduct // Removed getRecommendations prop
 }) => {
   if (!selectedProduct) return null;
-  const recommendations = getRecommendations(selectedProduct);
+
+  const [recommendations, setRecommendations] = useState([]);
+  const [loadingRecs, setLoadingRecs] = useState(true);
+
+  useEffect(() => {
+    const loadRecommendations = async () => {
+      if (!selectedProduct) return;
+
+      setLoadingRecs(true);
+      try {
+        const token = localStorage.getItem('token');
+        let recs = [];
+
+        if (token) {
+          // Prioritize personalized ML recommendations for logged-in users
+          recs = await api.getPersonalizedRecommendations();
+        }
+
+        // Fallback: if no personalized results (e.g., new user) or not logged in
+        if (!recs || recs.length === 0) {
+          recs = await api.getProductRecommendations(selectedProduct.id || selectedProduct._id);
+        }
+
+        setRecommendations(recs || []);
+      } catch (err) {
+        console.error('Failed to load recommendations:', err);
+        // Final fallback
+        const fallback = await api.getProductRecommendations(selectedProduct.id || selectedProduct._id);
+        setRecommendations(fallback || []);
+      } finally {
+        setLoadingRecs(false);
+      }
+    };
+
+    loadRecommendations();
+  }, [selectedProduct]);
 
   const renderRecommendations = (recommendations, title) => (
     <div className={`mt-12 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-6`}>
@@ -21,7 +57,7 @@ const ProductDetail = ({
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {recommendations.map((product) => (
           <div
-            key={product.id}
+            key={product.id || product._id}
             className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}
           >
             <div
@@ -34,7 +70,7 @@ const ProductDetail = ({
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-48 object-cover  hover:scale-105 transition-transform duration-300"
+                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
               />
               {product.isPremium && (
                 <div className="absolute top-2 left-2">
@@ -54,7 +90,7 @@ const ProductDetail = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    addToCart(product.id);
+                    addToCart(product.id || product._id);
                   }}
                   className={`px-3 py-1 rounded text-xs transition-colors !rounded-button whitespace-nowrap cursor-pointer ${
                     product.isPremium
@@ -188,7 +224,15 @@ const ProductDetail = ({
             </div>
           </div>
         </div>
-        {recommendations.length > 0 && renderRecommendations(recommendations, "You might also like")}
+
+        {/* Recommendations Section */}
+        {loadingRecs ? (
+          <div className="mt-12 text-center">
+            <p className="text-lg">Loading personalized recommendations...</p>
+          </div>
+        ) : (
+          recommendations.length > 0 && renderRecommendations(recommendations, "You might also like")
+        )}
       </div>
     </div>
   );
