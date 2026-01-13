@@ -109,17 +109,76 @@ LyVON is a **luxury footwear e-commerce application** with:
 
 ## Project Structure
   ```
- lyvon-backend/
-├── frontend/ # React frontend
-├── auth-service/ # Authentication service
-├── catalog-service/ # Product catalog & wishlist
-├── order-service/ # Order processing
-├── recommendation-service/ # ML recommendations
-├── kubernetes/ # K8s manifests (Deployments, HPA, Ingress)
-├── terraform/ # AWS infrastructure (EKS, Redis, SQS)
-├── docker-compose.yml # Local development stack
-├── .github/workflows/ # CI/CD pipelines
-└── README.md
+lyvon-backend/
+├── auth-service/                  ← Authentication microservice
+│   ├── src/
+│   │   ├── controllers/           ← Auth controllers (login, signup)
+│   │   │   └── authController.js
+│   │   ├── routes/                ← API routes
+│   │   │   └── authRoutes.js
+│   │   ├── models/                ← MongoDB models (User)
+│   │   │   └── userModel.js
+│   │   ├── middleware/            ← JWT auth middleware
+│   │   │   └── authMiddleware.js
+│   │   ├── config/                ← DB connection, env vars
+│   │   │   └── db.js
+│   │   └── app.js                 ← Express app setup
+│   ├── tests/                     ← Jest unit/integration tests
+│   │   └── auth.test.js
+│   ├── Dockerfile                 ← Multi-stage Docker build
+│   ├── package.json               ← Dependencies: express, mongoose, jwt, redis
+│   └── .env.example               ← Env vars (JWT_SECRET, MONGO_URI, REDIS_URL)
+├── catalog-service/               ← Product catalog microservice
+│   ├── src/
+│   │   ├── controllers/           ← Product controllers (list, filter, get by ID)
+│   │   │   └── productController.js
+│   │   ├── routes/                ← API routes
+│   │   │   └── productRoutes.js
+│   │   ├── models/                ← MongoDB models (Product)
+│   │   │   └── productModel.js
+│   │   ├── middleware/            ← Caching middleware
+│   │   │   └── cacheMiddleware.js
+│   │   ├── config/                ← DB + Redis connection
+│   │   │   └── db.js
+│   │   └── app.js                 ← Express app with clustering
+│   ├── tests/                     ← Jest tests
+│   │   └── product.test.js
+│   ├── Dockerfile
+│   ├── package.json               ← + ioredis for Redis
+│   └── .env.example
+├── order-service/                 ← Order processing microservice
+│   ├── src/
+│   │   ├── controllers/           ← Order controllers (create, get, confirm)
+│   │   │   └── orderController.js
+│   │   ├── routes/                ← API routes
+│   │   │   └── orderRoutes.js
+│   │   ├── models/                ← MongoDB models (Order)
+│   │   │   └── orderModel.js
+│   │   ├── queue/                 ← SQS queue handlers
+│   │   │   └── sqsHandler.js
+│   │   ├── config/                ← DB + SQS setup
+│   │   │   └── db.js
+│   │   └── app.js                 ← Express with PM2 clustering
+│   ├── tests/                     ← Jest tests
+│   │   └── order.test.js
+│   ├── Dockerfile
+│   ├── package.json               ← + @aws-sdk/client-sqs
+│   └── .env.example               ← + AWS credentials, SQS_QUEUE_URL
+├── payments_services/...          ← + for payments services
+├── admin_services/..              ← + for admin services 
+├── kubernetes/                    ← K8s manifests (Helm chart optional)
+│   ├── deployments/               ← Deployment YAML for each service
+│   ├── services/                  ← Service YAML
+│   ├── ingress/                   ← ALB Ingress
+│   └── hpa/                       ← Horizontal Pod Autoscaler
+├── terraform/                     ← IaC for AWS
+│   ├── main.tf                    ← EKS cluster, ALB, ElastiCache, SQS
+│   ├── variables.tf
+│   └── outputs.tf
+├── docker-compose.yml             ← Local dev stack (services + MongoDB + Redis)
+├── .github/workflows/ci-cd.yml    ← GitHub Actions pipeline
+├── README.md                      ← Setup instructions
+└── .gitignore
 
 ```
 
