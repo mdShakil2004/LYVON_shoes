@@ -87,7 +87,7 @@ LyVON is a **luxury footwear e-commerce application** with:
 - Docker (multi-stage builds)
 - Docker Compose (local dev)
 - Kubernetes (EKS, HPA, ALB Ingress)
-- Terraform (IaC)
+- Terraform (IAC)
 - GitHub Actions (CI/CD)
 - Trivy security scanning
 - Prometheus & Grafana (monitoring)
